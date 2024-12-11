@@ -14,7 +14,6 @@ class Paddle : Component
     public Vector2 Position;
     public float Speed;
     Texture2D Texture;
-
     public Paddle(int Width, int Height, Vector2 Position)
     {
         this.Position = Position;
@@ -66,5 +65,10 @@ class Paddle : Component
         box.PreviousOverlapY = -1;
         box.Position = Position;
         box.Size = new Vector2(Texture.Width, Texture.Height);
+    }
+
+    public void ResetPosition(object sender)
+    {
+        Position.Y = Globals.CanvasHeight / 2 - Globals.PaddleHeight / 2;
     }
 }

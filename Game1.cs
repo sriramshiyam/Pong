@@ -26,6 +26,7 @@ public class Game1 : Game
     {
         Globals.GraphicsDevice = GraphicsDevice;
         Globals.Window = Window;
+        Globals.Content = Content;
         gameManager = new GameManager();
         base.Initialize();
     }

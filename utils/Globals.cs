@@ -1,4 +1,5 @@
 using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
 
 namespace Pong.utils;
@@ -7,6 +8,8 @@ class Globals
 {
     public static GraphicsDevice GraphicsDevice;
     public static GameWindow Window;
+    public static ContentManager Content;
+    public static State state;
     public static int CanvasWidth;
     public static int CanvasHeight;
     public static int PaddleWidth;
@@ -18,6 +21,13 @@ class Globals
     public static int MiddleNetHeight;
     public static int BallWidth;
     public static int BallHeight;
+}
+
+enum State
+{
+    MAIN_MENU,
+    GAME_LEVEL,
+    GAME_OVER
 }
 
 struct Box

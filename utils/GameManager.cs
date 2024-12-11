@@ -1,6 +1,5 @@
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-using Microsoft.Xna.Framework.Input;
 using Pong.sprite;
 
 namespace Pong.utils;
@@ -8,88 +7,70 @@ namespace Pong.utils;
 class GameManager : Component
 {
     private Canvas canvas;
-    private Paddle paddle1;
-    private Paddle paddle2;
-    private Net net;
-    Ball ball;
+    private MainMenu mainMenu;
+    private GameLevel gameLevel;
+    private GameOver gameOver;
 
     public GameManager()
     {
+        Globals.state = State.MAIN_MENU;
+
         Globals.CanvasWidth = 1920;
         Globals.CanvasHeight = 1080;
-        Globals.PaddleWidth = 25;
-        Globals.PaddleHeight = 150;
-        Globals.PaddleMargin = 200;
-        Globals.SideNetWidth = Globals.CanvasWidth;
-        Globals.SideNetHeight = 25;
-        Globals.MiddleNetWidth = 25;
-        Globals.MiddleNetHeight = Globals.CanvasHeight;
-        Globals.BallWidth = 30;
-        Globals.BallHeight = 25;
-
 
         canvas = new Canvas(Globals.GraphicsDevice, Globals.CanvasWidth, Globals.CanvasHeight);
         canvas.SetDestinationRectangle(this, System.EventArgs.Empty);
 
         Globals.Window.ClientSizeChanged += canvas.SetDestinationRectangle;
 
-        net = new Net()
-        {
-            Size1 = new Point(Globals.SideNetWidth, Globals.SideNetHeight),
-            Size2 = new Point(Globals.MiddleNetWidth, Globals.MiddleNetHeight),
-            Position1 = Vector2.Zero,
-            Position2 = new Vector2(Globals.CanvasWidth / 2 - Globals.MiddleNetWidth / 2, 0),
-            Position3 = new Vector2(0, Globals.CanvasHeight - Globals.SideNetHeight)
-        };
-        net.LoadTextures();
-        net.LoadBoxes();
+        mainMenu = new MainMenu();
+        gameLevel = new GameLevel();
+        gameOver = new GameOver();
 
-        paddle1 = new Paddle(Globals.PaddleWidth, Globals.PaddleHeight,
-                            new Vector2(Globals.PaddleMargin, Globals.CanvasHeight / 2 - Globals.PaddleHeight / 2))
-        {
-            UpKey = Keys.W,
-            DownKey = Keys.S,
-            Speed = 500
-        };
-
-        paddle1.LoadBox();
-
-        paddle2 = new Paddle(Globals.PaddleWidth, Globals.PaddleHeight,
-                    new Vector2(Globals.CanvasWidth - Globals.PaddleMargin, Globals.CanvasHeight / 2 - Globals.PaddleHeight / 2))
-        {
-            UpKey = Keys.Up,
-            DownKey = Keys.Down,
-            Speed = 500
-        };
-
-        paddle2.LoadBox();
-
-        ball = new Ball(Globals.BallWidth, Globals.BallHeight);
+        gameLevel.GameOver += GameOverState;
+        gameOver.StartGame += gameLevel.Reset;
     }
+
     public override void Update(GameTime gameTime)
     {
-        paddle1.Update(gameTime);
-        paddle2.Update(gameTime);
-        ball.Update(gameTime);
-
-        ball.PaddleBoxCollision(ref paddle1.box);
-        ball.PaddleBoxCollision(ref paddle2.box);
-        ball.SideNetBoxCollision(ref net.box1);
-        ball.SideNetBoxCollision(ref net.box2);
+        switch (Globals.state)
+        {
+            case State.MAIN_MENU:
+                mainMenu.Update(gameTime);
+                break;
+            case State.GAME_LEVEL:
+                gameLevel.Update(gameTime);
+                break;
+            case State.GAME_OVER:
+                gameOver.Update(gameTime);
+                break;
+        }
     }
 
     public override void Draw(SpriteBatch spriteBatch)
     {
         canvas.Activate();
-
-        spriteBatch.Begin();
-        paddle1.Draw(spriteBatch);
-        paddle2.Draw(spriteBatch);
-        net.Draw(spriteBatch);
-        ball.Draw(spriteBatch);
-        spriteBatch.End();
-
+        switch (Globals.state)
+        {
+            case State.MAIN_MENU:
+                mainMenu.Draw(spriteBatch);
+                break;
+            case State.GAME_LEVEL:
+                gameLevel.Draw(spriteBatch);
+                break;
+            case State.GAME_OVER:
+                gameOver.Draw(spriteBatch);
+                break;
+        }
         canvas.Draw(spriteBatch);
     }
 
+    private void GameOverState(object sender, int Score1, int Score2)
+    {
+        Globals.state = State.GAME_OVER;
+        gameOver.GameOverTimer = 2.0f;
+        gameOver.Score1 = Score1;
+        gameOver.Score2 = Score2;
+        gameOver.SetScorePosition();
+    }
 }

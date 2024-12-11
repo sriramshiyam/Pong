@@ -11,13 +11,18 @@ class Ball : Component
     public Vector2 Direction;
     public float Speed;
     Texture2D Texture;
-
+    private bool SpawnRight;
+    public delegate void BallGoneOutOfBounds(object sender);
+    public event BallGoneOutOfBounds BallOutOfBounds;
     public Ball(int Width, int Height)
     {
-        var random = new Random();
         Speed = 300;
+
         Position = new Vector2(Globals.PaddleMargin + Globals.PaddleWidth, Globals.CanvasHeight / 2 - Height / 2);
 
+        SpawnRight = true;
+
+        var random = new Random();
         float DirY = random.NextSingle() * (1.0f - (-1.0f)) + (-1.0f);
 
         while (DirY >= -0.3 && DirY <= 0.3)
@@ -26,7 +31,6 @@ class Ball : Component
         }
 
         Direction = new Vector2(1.0f, DirY);
-        Console.WriteLine(Direction);
         LoadTexture(Width, Height);
     }
 
@@ -47,6 +51,36 @@ class Ball : Component
     {
         float Delta = (float)gameTime.ElapsedGameTime.TotalSeconds;
         Position += Direction * Speed * Delta;
+        HandleBallOutOfBounds();
+    }
+
+    private void HandleBallOutOfBounds()
+    {
+        if (Position.X >= Globals.CanvasWidth || Position.X + Texture.Width <= 0)
+        {
+            Speed = 300;
+            BallOutOfBounds?.Invoke(this);
+            SpawnRight = !SpawnRight;
+
+            var random = new Random();
+            float DirY = random.NextSingle() * (1.0f - (-1.0f)) + (-1.0f);
+
+            while (DirY >= -0.3 && DirY <= 0.3)
+            {
+                DirY = random.NextSingle() * (1.0f - (-1.0f)) + (-1.0f);
+            }
+
+            if (SpawnRight)
+            {
+                Position = new Vector2(Globals.PaddleMargin + Globals.PaddleWidth, Globals.CanvasHeight / 2 - Texture.Height / 2);
+                Direction = new Vector2(1.0f, DirY);
+            }
+            else
+            {
+                Position = new Vector2(Globals.CanvasWidth - Globals.PaddleMargin - Globals.BallWidth, Globals.CanvasHeight / 2 - Texture.Height / 2);
+                Direction = new Vector2(-1.0f, DirY);
+            }
+        }
     }
 
     public override void Draw(SpriteBatch spriteBatch)
@@ -118,5 +152,21 @@ class Ball : Component
         {
             box.PreviousOverlapX = box.OverlapX;
         }
+    }
+
+    public void ResetPosition()
+    {
+        Position.X = Globals.PaddleMargin + Globals.PaddleWidth;
+        Position.Y = Globals.CanvasHeight / 2 - Texture.Height / 2;
+
+        var random = new Random();
+        float DirY = random.NextSingle() * (1.0f - (-1.0f)) + (-1.0f);
+
+        while (DirY >= -0.3 && DirY <= 0.3)
+        {
+            DirY = random.NextSingle() * (1.0f - (-1.0f)) + (-1.0f);
+        }
+
+        Direction = new Vector2(1.0f, DirY);
     }
 }
