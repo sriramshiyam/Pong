@@ -24,7 +24,7 @@ class GameLevel : Component
         Globals.SideNetWidth = Globals.CanvasWidth;
         Globals.SideNetHeight = 25;
         Globals.MiddleNetWidth = 25;
-        Globals.MiddleNetHeight = Globals.CanvasHeight;
+        Globals.MiddleNetHeight = Globals.CanvasHeight - Globals.SideNetHeight * 2;
         Globals.BallWidth = 30;
         Globals.BallHeight = 25;
 
@@ -33,7 +33,7 @@ class GameLevel : Component
             Size1 = new Point(Globals.SideNetWidth, Globals.SideNetHeight),
             Size2 = new Point(Globals.MiddleNetWidth, Globals.MiddleNetHeight),
             Position1 = Vector2.Zero,
-            Position2 = new Vector2(Globals.CanvasWidth / 2 - Globals.MiddleNetWidth / 2, 0),
+            Position2 = new Vector2(Globals.CanvasWidth / 2 - Globals.MiddleNetWidth / 2, Globals.SideNetHeight),
             Position3 = new Vector2(0, Globals.CanvasHeight - Globals.SideNetHeight)
         };
         net.LoadTextures();

@@ -41,6 +41,12 @@
 /processorParam:TextureFormat=Compressed
 /build:MenuFont2.spritefont
 
+#begin MiddleNetEffect.fx
+/importer:EffectImporter
+/processor:EffectProcessor
+/processorParam:DebugMode=Auto
+/build:MiddleNetEffect.fx
+
 #begin ScoreFont.spritefont
 /importer:FontDescriptionImporter
 /processor:FontDescriptionProcessor

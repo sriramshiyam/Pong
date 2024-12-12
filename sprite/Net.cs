@@ -17,9 +17,10 @@ class Net : Component
     public Vector2 Position1;
     public Vector2 Position2;
     public Vector2 Position3;
-
+    private Effect effect;
     public Net()
     {
+        effect = Globals.Content.Load<Effect>("MiddleNetEffect");
     }
 
     public void LoadBoxes()
@@ -67,7 +68,13 @@ class Net : Component
     public override void Draw(SpriteBatch spriteBatch)
     {
         spriteBatch.Draw(Texture1, Position1, Color.White);
+        spriteBatch.End();
+
+        spriteBatch.Begin(effect: effect);
         spriteBatch.Draw(Texture2, Position2, Color.White);
+        spriteBatch.End();
+
+        spriteBatch.Begin();
         spriteBatch.Draw(Texture1, Position3, Color.White);
     }
 
